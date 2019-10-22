@@ -28,6 +28,7 @@ services:
     build:
       context: . 
       dockerfile: medieval-battle/Dockerfile
+    command: mvn install
     environment:
       - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/test
       - REDIS_HOSTNAME=redis
