@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  mongo-express:
+    image: mongo-express
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: renatogroffe
+      ME_CONFIG_BASICAUTH_PASSWORD: MongoExpress2019!
+      ME_CONFIG_MONGODB_PORT: 27017
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: MongoDB2019!
+    links:
+      - mongo
+    networks: 
+      - mongo-compose-network
+    
+
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    networks: 
+      - mongo-compose-network
+   
+  backend:
+    build:
+      context: . 
+      dockerfile: medieval-battle/Dockerfile
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/test
+      - REDIS_HOSTNAME=redis
+    container_name: backend
+    ports:
+    - 8080:8080
+    links:
+      - mongo
+      - redis
+    depends_on:
+      - redis
+      - mongo
+    networks: 
+      - mongo-compose-network
+    
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+    networks: 
+      - mongo-compose-network
+
+    
+networks:
+  mongo-compose-network:
+     driver: bridge
+
+    #external: true
